@@ -1,0 +1,26 @@
+version: "3.9"
+services:
+  tailscale-proxy:
+    hostname: proxy
+    build:
+      context: .
+    stdin_open: true
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    dns:
+      - 1.1.1.1
+    volumes:
+      - './openvpn.ovpn:/etc/openvpn/openvpn.ovpn'
+    environment:
+      - TS_AUTHKEY=REPLACEME
+      - TS_USERSPACE=true
+      - TS_EXTRA_ARGS=--advertise-exit-node
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl" ,"-f", "ipinfo.io/ip" ]
+      interval: 1m
+      timeout: 15s
+      retries: 3
+      start_period: 1m
