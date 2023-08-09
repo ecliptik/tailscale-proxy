@@ -1,6 +1,8 @@
 FROM public.ecr.aws/debian/debian:bookworm-slim
 WORKDIR /app
 
+LABEL maintainer="Micheal Waltz <cloud.dockerfile@accounts.ecliptik.com>"
+
 #Install curl and ca certs
 RUN apt-get update && apt-get install -y curl ca-certificates
 
