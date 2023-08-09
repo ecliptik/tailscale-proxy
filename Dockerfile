@@ -1,7 +1,9 @@
 FROM public.ecr.aws/debian/debian:bookworm-slim
 WORKDIR /app
 
-LABEL maintainer="Micheal Waltz <cloud.dockerfile@accounts.ecliptik.com>"
+LABEL org.opencontainers.image.authors="Micheal Waltz <cloud.dockerfile@accounts.ecliptik.com>"
+LABEL org.opencontainers.image.description="Setup a Tailscale Exit Node to act as a VPN proxy"
+LABEL org.opencontainers.image.source="https://github.com/ecliptik/tailscale-proxy"
 
 #Install curl and ca certs
 RUN apt-get update && apt-get install -y curl ca-certificates
