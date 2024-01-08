@@ -1,21 +1,36 @@
 version: "3.9"
 services:
-  tailscale-proxy:
-    hostname: proxy
-    build:
-      context: .
-    stdin_open: true
+  gluetun-jp:
+    container_name: gluetun-jp
+    hostname: vpn-proxy
+    image: qmcgaw/gluetun
     cap_add:
       - NET_ADMIN
-    devices:
-      - /dev/net/tun
-    dns:
-      - 1.1.1.1
-    volumes:
-      - './openvpn.ovpn:/etc/openvpn/openvpn.ovpn'
     environment:
-      - TS_AUTHKEY=REPLACEME
+      - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER}
+      - VPN_TYPE=${VPN_TYPE}
+      - WIREGUARD_IMPLEMENTATION=userspace
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - WIREGUARD_PRESHARED_KEY=${WIREGUARD_PRESHARED_KEY}
+      - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
+      - SERVER_COUNTRIES=${COUNTRY}
+    volumes:
+      - gluetun-jp:/gluetun
+    dns:
+      - 8.8.8.8
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "ping" ,"-c1", "ifconfig.co" ]
+  tailscale-proxy:
+    image: ghcr.io/tailscale/tailscale
+    stdin_open: true
+    volumes:
+      - tailscalevarlibproxy:/var/lib
+    environment:
+      - TS_AUTH_KEY=${TS_AUTH_KEY}
       - TS_USERSPACE=true
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_SOCKET=/var/run/tailscale/tailscaled.sock
       - TS_EXTRA_ARGS=--advertise-exit-node
     restart: unless-stopped
     healthcheck:
@@ -24,3 +39,8 @@ services:
       timeout: 15s
       retries: 3
       start_period: 1m
+    network_mode: 'service:gluetun-jp'
+
+volumes:
+  tailscalevarlibproxy:
+  gluetun-jp:
