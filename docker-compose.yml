@@ -2,7 +2,7 @@ version: "3.9"
 services:
   gluetun-jp:
     container_name: gluetun-jp
-    hostname: vpn-proxy
+    hostname: japan-proxy
     image: qmcgaw/gluetun
     cap_add:
       - NET_ADMIN
@@ -13,7 +13,7 @@ services:
       - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
       - WIREGUARD_PRESHARED_KEY=${WIREGUARD_PRESHARED_KEY}
       - WIREGUARD_ADDRESSES=${WIREGUARD_ADDRESSES}
-      - SERVER_COUNTRIES=${COUNTRY}
+      - SERVER_COUNTRIES=${SERVER_COUNTRIES}
     volumes:
       - gluetun-jp:/gluetun
     dns:
